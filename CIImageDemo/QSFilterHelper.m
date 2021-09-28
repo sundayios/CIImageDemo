@@ -111,10 +111,11 @@
     UIImage *nimg = nil;
     @autoreleasepool {
         CIImage *result = [CIImage imageWithCGImage:sImg.CGImage];
-//        float scale = [[UIScreen mainScreen] scale];
-        CGFloat centerX = CGRectGetWidth(result.extent) / 2.0;
-        CGFloat centerY =CGRectGetHeight(result.extent) / 2.0;
-        CGFloat maxRadiu = sqrt(pow(centerX, 2) + pow(centerY, 2));
+        CGFloat dwidth = result.extent.size.width;
+        CGFloat dheight = result.extent.size.height;
+        CGFloat centerX = dwidth / 2.0;
+        CGFloat centerY = dheight / 2.0;
+        CGFloat maxShadowRadiu = sqrt(pow(centerX, 2) + pow(centerY, 2));
 
 //        CIFilter *colorFilter = [CIFilter filterWithName:@"CIConstantColorGenerator"];
 //        [colorFilter setValue:[UIColor whiteColor] forKey:@"inputColor"];
@@ -129,7 +130,18 @@
         [filterMaskOutter setValue:maskCIImg forKey:kCIInputImageKey];
         [filterMaskOutter setValue:@(maxRadius / minWidthMask) forKey:@"inputScale"];
         [filterMaskOutter setValue:@(1) forKey:@"inputAspectRatio"];
-        CIImage *maskImgMax = [[filterMaskOutter valueForKey:kCIOutputImageKey] imageByCroppingToRect:result.extent];
+        CIImage *maskImgMax = [filterMaskOutter valueForKey:kCIOutputImageKey];
+        CGFloat widthMaskImgOutter = maskImgMax.extent.size.width;
+        CGFloat heightMaskImgOutter = maskImgMax.extent.size.height;
+        
+        if (dwidth - widthMaskImgOutter != 0 || dheight - heightMaskImgOutter != 0) {
+            CGAffineTransform transitionOutter = CGAffineTransformMakeTranslation((dwidth - widthMaskImgOutter) / 2.0, (dheight - heightMaskImgOutter) / 2.0);
+            CIFilter *filterAffTOutter = [CIFilter filterWithName:@"CIAffineTransform"];
+            [filterAffTOutter setValue:maskImgMax forKey:@"inputImage"];
+            [filterAffTOutter setValue:[NSValue valueWithCGAffineTransform:transitionOutter] forKey:@"inputTransform"];
+            maskImgMax = [filterAffTOutter valueForKey:kCIOutputImageKey];
+        }
+        
         
         //clearbg
         CIFilter *filterConstantColor = [CIFilter filterWithName:@"CIConstantColorGenerator"];
@@ -151,16 +163,21 @@
             [filterMaskInner setValue:maskCIImg forKey:kCIInputImageKey];
             [filterMaskInner setValue:@(minRadius / minWidthMask) forKey:@"inputScale"];
             [filterMaskInner setValue:@(1) forKey:@"inputAspectRatio"];
-            CIImage *maskImgMin = [[filterMaskInner valueForKey:kCIOutputImageKey] imageByCroppingToRect:result.extent];
+            CIImage *maskImgMin = [filterMaskInner valueForKey:kCIOutputImageKey];
+            CGFloat widthMaskImgInner = maskImgMin.extent.size.width;
+            CGFloat heightMaskImgInner = maskImgMin.extent.size.height;
             
-    //        CIFilter *filterConstantColor = [CIFilter filterWithName:@"CIConstantColorGenerator"];
-    //        [filterConstantColor setValue:[CIColor colorWithCGColor:bgColor.CGColor] forKey:@"inputColor"];
-    //        CIImage *bgImgClearOuter = [[filterConstantColor valueForKey:kCIOutputImageKey] imageByCroppingToRect:result.extent];
-            
+            if (dwidth - widthMaskImgInner != 0 || dheight - heightMaskImgInner != 0) {
+                CGAffineTransform transitionInner = CGAffineTransformMakeTranslation((dwidth - widthMaskImgInner) / 2.0, (dheight - heightMaskImgInner) / 2.0);
+                CIFilter *filterAffTInner = [CIFilter filterWithName:@"CIAffineTransform"];
+                [filterAffTInner setValue:maskImgMax forKey:@"inputImage"];
+                [filterAffTInner setValue:[NSValue valueWithCGAffineTransform:transitionInner] forKey:@"inputTransform"];
+                maskImgMin = [filterAffTInner valueForKey:kCIOutputImageKey];
+            }
             //
             CIFilter *filterRadialGradient = [CIFilter filterWithName:@"CIRadialGradient"];
             CIVector *civ = [[CIVector alloc] initWithCGPoint:CGPointMake(centerX, centerY)];
-            CGFloat maxr = maxRadiu * 1.3;
+            CGFloat maxr = maxShadowRadiu * 1.3;
             [filterRadialGradient setValue:civ forKey:@"inputCenter"];
             [filterRadialGradient setValue:[CIColor colorWithCGColor:[UIColor clearColor].CGColor] forKey:@"inputColor0"];
             [filterRadialGradient setValue:[CIColor colorWithCGColor:bgColor.CGColor] forKey:@"inputColor1"];
