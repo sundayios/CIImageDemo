@@ -50,10 +50,35 @@
         CIImage *cimaskImg = [CIImage imageWithCGImage:maskImg.CGImage];
         CIImage *ciSImg = [CIImage imageWithCGImage:imgS.CGImage];
         
+//        CGAffineTransform scaleT = CGAffineTransformMakeScale(1.5, 1.5);
+//        CGAffineTransform transition = CGAffineTransformTranslate(scaleT, ciSImg.extent.size.width / 2.0, ciSImg.extent.size.height / 2.0);
+        
+        CIFilter *filter = [CIFilter filterWithName:@"CILanczosScaleTransform"];
+        [filter setValue:cimaskImg forKey:kCIInputImageKey];
+        [filter setValue:@(5) forKey:@"inputScale"];
+        [filter setValue:@(1) forKey:@"inputAspectRatio"];
+        CIImage *tempCImg = [filter valueForKey:kCIOutputImageKey];
+        
+        
+        CGAffineTransform transition = CGAffineTransformMakeTranslation((ciSImg.extent.size.width - tempCImg.extent.size.width) / 2.0, (ciSImg.extent.size.height  - tempCImg.extent.size.height) / 2.0);
+//        CGAffineTransform scaleT = CGAffineTransformScale(transition, 5, 5);
+        
+        
+        
+        
+        CIFilter *filterAff = [CIFilter filterWithName:@"CIAffineTransform"];
+        [filterAff setValue:tempCImg forKey:@"inputImage"];
+        [filterAff setValue:[NSValue valueWithCGAffineTransform:transition] forKey:@"inputTransform"];
+//        CIImage *tempCImg = [[filterAff valueForKey:kCIOutputImageKey] imageByCroppingToRect:ciSImg.extent];
+        tempCImg = [filterAff valueForKey:kCIOutputImageKey];
+        
+        
+        
+        
         CIFilter *filterOuter = [CIFilter filterWithName:@"CISourceOutCompositing"];//CISourceOutCompositing
        [filterOuter setValue:ciSImg forKey:@"inputImage"];
-       [filterOuter setValue:cimaskImg forKey:@"inputBackgroundImage"];
-       CIImage* douterImg = [filterOuter valueForKey:kCIOutputImageKey];
+       [filterOuter setValue:tempCImg forKey:@"inputBackgroundImage"];
+       CIImage* douterImg = [[filterOuter valueForKey:kCIOutputImageKey] imageByCroppingToRect:ciSImg.extent];
         nimg = [[UIImage alloc] initWithCIImage:douterImg];
     }
     return nimg;

@@ -41,7 +41,7 @@
 
 - (UIImageView *)imgV {
     if (!_imgV) {
-        _imgV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 30, 200, 300)];
+        _imgV = [[UIImageView alloc] init];
         _imgV.contentMode = UIViewContentModeScaleAspectFit;
         //UIViewContentModeCenter;
         //UIViewContentModeScaleAspectFit
@@ -51,7 +51,7 @@
 - (UIImageView *)imgV1 {
     if (!_imgV1) {
         _imgV1 = [[UIImageView alloc] init];
-        _imgV1.contentMode = UIViewContentModeCenter;//UIViewContentModeScaleAspectFit;
+        _imgV1.contentMode = UIViewContentModeScaleAspectFit;
         //UIViewContentModeCenter;
     }
     return _imgV1;
@@ -109,8 +109,9 @@
 
 - (void)buttonAction:(UIButton *)sender{
     UIImage *sImg = [UIImage imageNamed:@"bailiang.png"];
-    UIImage *nimg = [QSFilterHelper qs_SourceImg:sImg];
-    //[QSFilterHelper qs_SourceOuter:self.img maskImg:sImg];
+    UIImage *nimg = [QSFilterHelper qs_SourceOuter:self.img maskImg:sImg];;
+    //[QSFilterHelper qs_SourceImg:sImg];
+    //
     self.imgV1.image = nimg;
 }
 @end
