@@ -35,7 +35,8 @@
 
 - (UIImage *)maskImg {
     if (!_maskImg) {
-        _maskImg = [UIImage imageNamed:@"bailiang.png"];
+        _maskImg = [UIImage sq_ImageWithColor:[UIColor whiteColor] withPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, 300, 500)]];
+        //[UIImage imageNamed:@"bailiang.png"];
     }
     return _maskImg;
 }
@@ -72,8 +73,8 @@
         _sliderInnerRadius = [[UISlider alloc] initWithFrame:CGRectMake(20, 700, self.view.frame.size.width - 40, 30)];
         _sliderInnerRadius.thumbTintColor = [UIColor greenColor];
         _sliderInnerRadius.minimumValue = 0;
-        _sliderInnerRadius.maximumValue = 1000;
-        _sliderInnerRadius.value = 1000;
+        _sliderInnerRadius.maximumValue = 2000;
+        _sliderInnerRadius.value = 2000;
     }
     return _sliderInnerRadius;
 }
@@ -103,6 +104,7 @@
 }
 
 - (void)sliderChange:(UISlider *)sender {
+    NSLog(@"%.f",sender.value);
     UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:0.8 * sender.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
     self.imgV1.image = nimg;
 }
@@ -157,8 +159,9 @@
     
     
 //    [self getLayerImage];
-    
-    UIImage *img = [UIImage sq_ImageWithColor:[UIColor blackColor] withPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, 300, 500)]];
+    UIImage *img;
+//    UIImage *img = [UIImage sq_ImageWithColor:[UIColor blackColor] withPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, 300, 500)]];
+//    img = [
     //[UIImage imageMaskWithContentSize:CGSizeMake(80, 100) maskWidth:30 colors:@[[UIColor blackColor],[UIColor whiteColor]] cornerRadius:40 fillContent:YES];
     
     self.imgV1.image = img;
