@@ -35,7 +35,7 @@
 
 - (UIImage *)maskImg {
     if (!_maskImg) {
-        _maskImg = [UIImage sq_ImageWithColor:[UIColor whiteColor] withPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, 300, 500)]];
+        _maskImg = [UIImage sq_ImageWithColor:[UIColor greenColor] withPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, 300, 500)]];
         //[UIImage imageNamed:@"bailiang.png"];
     }
     return _maskImg;
@@ -97,15 +97,15 @@
     [self.view addSubview:self.btn];
     
 
-    UIImage *sImg = [UIImage imageNamed:@"bailiang.png"];
-//    self.imgV1.image = sImg;
+//    UIImage *sImg = [UIImage imageNamed:@"bailiang.png"];
+    self.imgV1.image = self.maskImg;
     
     
 }
 
 - (void)sliderChange:(UISlider *)sender {
     NSLog(@"%.f",sender.value);
-    UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:0.8 * sender.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+    UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:0.5 * sender.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
     self.imgV1.image = nimg;
 }
 
@@ -151,19 +151,59 @@
 
 
 - (void)buttonAction:(UIButton *)sender{
-//    UIImage *sImg = [UIImage imageNamed:@"bailiang.png"];
-//    UIImage *nimg = [QSFilterHelper qs_SourceOuter:self.img maskImg:sImg];;
-//    //[QSFilterHelper qs_SourceImg:sImg];
-//    //
-//    self.imgV1.image = nimg;
+    [self heightAction];
     
-    
-//    [self getLayerImage];
+}
+- (void)customBezierPath {
     UIImage *img;
 //    UIImage *img = [UIImage sq_ImageWithColor:[UIColor blackColor] withPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, 300, 500)]];
 //    img = [
     //[UIImage imageMaskWithContentSize:CGSizeMake(80, 100) maskWidth:30 colors:@[[UIColor blackColor],[UIColor whiteColor]] cornerRadius:40 fillContent:YES];
     
     self.imgV1.image = img;
+}
+
+- (void)heightAction{
+    
+    UIImage *nimg;
+    @autoreleasepool {
+        
+        //边缘均匀加深
+        CIImage *maskImgMax = [CIImage imageWithCGImage:self.maskImg.CGImage];
+        CGRect dframe = maskImgMax.extent;
+        CIFilter *filterHeightFieldMask = [CIFilter filterWithName:@"CIHeightFieldFromMask"];//
+        [filterHeightFieldMask setValue:maskImgMax forKey:@"inputImage"];
+        [filterHeightFieldMask setValue:@(20) forKey:@"inputRadius"];
+        CIImage *dmaskImgHeight = [[filterHeightFieldMask valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+       
+        
+        
+        //destimg 边缘深度
+        CIFilter *frg = [CIFilter filterWithName:@"CIMaskToAlpha"];//CIMaskToAlpha
+        [frg setValue:dmaskImgHeight forKey:@"inputImage"];
+        
+        
+        
+        CIImage *dImageRG = [[frg valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+        
+        //cbg
+        CIFilter *filterConstantCc= [CIFilter filterWithName:@"CIConstantColorGenerator"];
+        [filterConstantCc setValue:[CIColor colorWithCGColor:[UIColor clearColor].CGColor] forKey:@"inputColor"];
+        CIImage *bgCcImg = [[filterConstantCc valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+        
+        //destimg 边缘深度
+        CIFilter *filterBlendLast = [CIFilter filterWithName:@"CIBlendWithAlphaMask"];//CIMaskToAlpha
+        [filterBlendLast setValue:maskImgMax forKey:@"inputImage"];
+        [filterBlendLast setValue:bgCcImg forKey:@"inputBackgroundImage"];
+        [filterBlendLast setValue:dImageRG forKey:@"inputMaskImage"];
+        
+        CIImage *dImg = [[filterBlendLast valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+        
+        
+        nimg = [UIImage imageWithCIImage:dImg];
+    }
+    self.imgV1.backgroundColor = [UIColor blackColor];
+    self.imgV1.image = nimg;
+    
 }
 @end

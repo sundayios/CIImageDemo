@@ -126,7 +126,7 @@
         CGFloat maskWidth = maskCIImg.extent.size.width;
         CGFloat maskHeight = maskCIImg.extent.size.height;
         CGFloat minWidthMask = maskWidth > maskHeight ? maskHeight : maskWidth;
-        //外maskImg
+        //外maskImg white
         CIFilter *filterMaskOutter = [CIFilter filterWithName:@"CILanczosScaleTransform"];
         [filterMaskOutter setValue:maskCIImg forKey:kCIInputImageKey];
         [filterMaskOutter setValue:@(maxRadius / minWidthMask) forKey:@"inputScale"];
@@ -145,14 +145,19 @@
         
         
         //cbg
-        CIFilter *filterConstantColor = [CIFilter filterWithName:@"CIConstantColorGenerator"];
-        [filterConstantColor setValue:[CIColor colorWithCGColor:[UIColor clearColor].CGColor] forKey:@"inputColor"];
-        CIImage *bgColorImg = [[filterConstantColor valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+        CIFilter *filterConstantCc= [CIFilter filterWithName:@"CIConstantColorGenerator"];
+        [filterConstantCc setValue:[CIColor colorWithCGColor:[UIColor clearColor].CGColor] forKey:@"inputColor"];
+        CIImage *bgCcImg = [[filterConstantCc valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+        
+        CIFilter *filterConstantCb = [CIFilter filterWithName:@"CIConstantColorGenerator"];
+        [filterConstantCb setValue:[CIColor colorWithCGColor:bgColor.CGColor] forKey:@"inputColor"];
+        CIImage *bgColorImg = [[filterConstantCb valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
         
         //外 destImage
         CIFilter *filterBlendWithDest = [CIFilter filterWithName:@"CIBlendWithMask"];
         [filterBlendWithDest setValue:result forKey:@"inputImage"];
         [filterBlendWithDest setValue:bgColorImg forKey:@"inputBackgroundImage"];
+        //bgCcImg
         [filterBlendWithDest setValue:maskImgMax forKey:@"inputMaskImage"];
         CIImage *destImage = [[filterBlendWithDest valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
         
@@ -163,22 +168,28 @@
             CIVector *civ = [[CIVector alloc] initWithCGPoint:CGPointMake(centerX, centerY)];
             CGFloat maxr = maxShadowRadiu * 1.3;
             [filterRadialGradient setValue:civ forKey:@"inputCenter"];
-            [filterRadialGradient setValue:[CIColor colorWithCGColor:[UIColor whiteColor].CGColor] forKey:@"inputColor0"];
-            [filterRadialGradient setValue:[CIColor colorWithCGColor:[UIColor clearColor].CGColor] forKey:@"inputColor1"];
-            [filterRadialGradient setValue:@(maxRadius) forKey:@"inputRadius1"];//model.realValue * @(maxr)
-            [filterRadialGradient setValue:@(0) forKey:@"inputRadius0"];//model.realValue * @(0)
-            CIImage *dmaskImgORG = [[filterRadialGradient valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
-            
-            
-            
-            CIFilter *filter_bgW2CC = [CIFilter filterWithName:@"CIRadialGradient"];
-            
-            [filterRadialGradient setValue:civ forKey:@"inputCenter"];
             [filterRadialGradient setValue:[CIColor colorWithCGColor:[UIColor clearColor].CGColor] forKey:@"inputColor0"];
             [filterRadialGradient setValue:[CIColor colorWithCGColor:[UIColor whiteColor].CGColor] forKey:@"inputColor1"];
             [filterRadialGradient setValue:@(maxRadius) forKey:@"inputRadius1"];//model.realValue * @(maxr)
-            [filterRadialGradient setValue:@(0) forKey:@"inputRadius0"];//model.realValue * @(0)
-            CIImage *dmaskImgbgW2CC = [[filterRadialGradient valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+            [filterRadialGradient setValue:@(minRadius) forKey:@"inputRadius0"];//model.realValue * @(0)
+            CIImage *dmaskImgORGw2c = [[filterRadialGradient valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+            
+            
+            CIFilter *fbgRGLoop = [CIFilter filterWithName:@"CIBlendWithMask"];
+            [fbgRGLoop setValue:dmaskImgORGw2c forKey:@"inputImage"];
+            [fbgRGLoop setValue:bgCcImg forKey:@"inputBackgroundImage"];
+            [fbgRGLoop setValue:maskImgMax forKey:@"inputMaskImage"];
+            CIImage *bgImgRGLoop = [[fbgRGLoop valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+            
+            
+//            CIFilter *filter_bgW2CC = [CIFilter filterWithName:@"CIRadialGradient"];
+//
+//            [filterRadialGradient setValue:civ forKey:@"inputCenter"];
+//            [filterRadialGradient setValue:[CIColor colorWithCGColor:[UIColor clearColor].CGColor] forKey:@"inputColor0"];
+//            [filterRadialGradient setValue:[CIColor colorWithCGColor:[UIColor whiteColor].CGColor] forKey:@"inputColor1"];
+//            [filterRadialGradient setValue:@(maxRadius) forKey:@"inputRadius1"];//model.realValue * @(maxr)
+//            [filterRadialGradient setValue:@(0) forKey:@"inputRadius0"];//model.realValue * @(0)
+//            CIImage *dmaskImgbgW2CC = [[filterRadialGradient valueForKey:kCIOutputImageKey] imageByCroppingToRect:CGRectMake(0, 0, maxRadius, maxRadius)];
             
             
             //内maskImg
@@ -202,53 +213,46 @@
             
             
             //边缘均匀加深
-            CGFloat radialRadius = (maxRadius - minRadius) / 3.0;
+            CGFloat radialRadius = (maxRadius - minRadius) * 1.2;
             CIFilter *filterHeightFieldMask = [CIFilter filterWithName:@"CIHeightFieldFromMask"];//
             [filterHeightFieldMask setValue:maskImgMax forKey:@"inputImage"];
             [filterHeightFieldMask setValue:@(radialRadius) forKey:@"inputRadius"];
             CIImage *dmaskImgHeight = [[filterHeightFieldMask valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+         
+            //边缘均匀加深 添加透明度
+            CIFilter *frg = [CIFilter filterWithName:@"CIMaskToAlpha"];
+            [frg setValue:dmaskImgHeight forKey:@"inputImage"];
+            CIImage *dImagergEdge = [[frg valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
             
-            
-            CIFilter *filterDoubleLoop = [CIFilter filterWithName:@"CISourceOutCompositing"];//CISourceOutCompositing
-            [filterDoubleLoop setValue:dmaskImgHeight forKey:@"inputImage"];
-            [filterDoubleLoop setValue:maskImgMin forKey:@"inputBackgroundImage"];
-            CIImage *dImgRadialGradient = [[filterDoubleLoop valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
-            
-            
-            
-            
-//            CIFilter *filterShaded = [CIFilter filterWithName:@"CIShadedMaterial"];//
-//            [filterShaded setValue:destImage forKey:@"inputImage"];//result
-//            [filterShaded setValue:dmaskImgHeight forKey:@"inputShadingImage"];
-//            [filterShaded setValue:@(radialRadius) forKey:@"inputScale"];
-//            CIImage *dImgSourceInner = [[filterShaded valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
-            
-            
-//            CIFilter *filterBlendWithMask = [CIFilter filterWithName:@"CIBlendWithMask"];
-//            [filterBlendWithMask setValue:croppedImage forKey:@"inputImage"];
-//            [filterBlendWithMask setValue:bgColorImg forKey:@"inputBackgroundImage"];
-//            [filterBlendWithMask setValue:maskImgMax forKey:@"inputMaskImage"];
-//            CIImage *bgImgOutterRadialGradient = [filterBlendWithMask valueForKey:kCIOutputImageKey];
-
-            
-            CIFilter *filterBlendLast = [CIFilter filterWithName:@"CIBlendWithAlphaMask"];//CIBlendWithAlphaMask
-            [filterBlendLast setValue:dmaskImgORG forKey:@"inputImage"];
-            [filterBlendLast setValue:destImage forKey:@"inputBackgroundImage"];
-            [filterBlendLast setValue:dmaskImgHeight forKey:@"inputMaskImage"];
-            
-            CIImage *dImgSourceInner = [[filterBlendLast valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+            //destimg 边缘深度
+            CIFilter *filterBlendLast = [CIFilter filterWithName:@"CIBlendWithAlphaMask"];//CIMaskToAlpha
+            [filterBlendLast setValue:destImage forKey:@"inputImage"];
+            [filterBlendLast setValue:bgCcImg forKey:@"inputBackgroundImage"];
+            [filterBlendLast setValue:dImagergEdge forKey:@"inputMaskImage"];
+            CIImage *destimgImageRG = [[filterBlendLast valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
             
             ///双环 maskImg.path形状
+              CIFilter *filterDoubleLoop = [CIFilter filterWithName:@"CISourceOutCompositing"];
+                [filterDoubleLoop setValue:bgImgRGLoop forKey:@"inputImage"];
+                [filterDoubleLoop setValue:maskImgMin forKey:@"inputBackgroundImage"];
+                CIImage *dImgRGDoubleLoop = [[filterDoubleLoop valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+            
             ///w-c
-            CIFilter *filterOutHeight = [CIFilter filterWithName:@"CISourceOutCompositing"];//CISourceOutCompositing
-            [filterOutHeight setValue:dmaskImgbgW2CC forKey:@"inputImage"];
-            [filterOutHeight setValue:bgColorImg forKey:@"inputBackgroundImage"];
-            CIImage *dImgOutHeight = [[filterDoubleLoop valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+//            CIFilter *filterOutHeight = [CIFilter filterWithName:@"CISourceOutCompositing"];//CISourceOutCompositing
+//            [filterOutHeight setValue:dmaskImgbgW2CC forKey:@"inputImage"];
+//            [filterOutHeight setValue:bgColorImg forKey:@"inputBackgroundImage"];
+//            CIImage *dImgOutHeight = [[filterDoubleLoop valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
+            
+            CIFilter *fmaskBlur = [CIFilter filterWithName:@"CIMaskedVariableBlur"];
+            [fmaskBlur setValue:destimgImageRG forKey:@"inputImage"];
+            [fmaskBlur setValue:dImgRGDoubleLoop forKey:@"inputMask"];
+            [fmaskBlur setValue:@(maxRadius - minRadius) forKey:@"inputRadius"];
+            CIImage *dsreult = [[fmaskBlur valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
             
             //混合模糊
             CIFilter *composite = [CIFilter filterWithName:@"CISourceOverCompositing"];//CISourceOutCompositing
-            [composite setValue:dImgRadialGradient forKey:@"inputImage"];
-            [composite setValue:destImage forKey:@"inputBackgroundImage"];
+            [composite setValue:dsreult forKey:@"inputImage"];
+            [composite setValue:bgColorImg forKey:@"inputBackgroundImage"];
             CIImage *dImgResult = [[composite valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
             
             
