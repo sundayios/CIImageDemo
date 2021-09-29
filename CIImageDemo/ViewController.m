@@ -7,6 +7,7 @@
 
 #import "ViewController.h"
 #import "QSFilterHelper.h"
+#import "UIImage+SQExtension.h"
 
 @interface ViewController ()
 
@@ -71,8 +72,8 @@
         _sliderInnerRadius = [[UISlider alloc] initWithFrame:CGRectMake(20, 700, self.view.frame.size.width - 40, 30)];
         _sliderInnerRadius.thumbTintColor = [UIColor greenColor];
         _sliderInnerRadius.minimumValue = 0;
-        _sliderInnerRadius.maximumValue = 200;
-        _sliderInnerRadius.value = 200;
+        _sliderInnerRadius.maximumValue = 1000;
+        _sliderInnerRadius.value = 1000;
     }
     return _sliderInnerRadius;
 }
@@ -94,9 +95,9 @@
     [self.btn addTarget:self action:@selector(buttonAction:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btn];
     
-    
+
     UIImage *sImg = [UIImage imageNamed:@"bailiang.png"];
-    self.imgV1.image = sImg;
+//    self.imgV1.image = sImg;
     
     
 }
@@ -106,12 +107,60 @@
     self.imgV1.image = nimg;
 }
 
+- (void)getLayerImage {
+    CIFilter *filterConstantColor = [CIFilter filterWithName:@"CIConstantColorGenerator"];
+    [filterConstantColor setValue:[CIColor colorWithCGColor:[UIColor whiteColor].CGColor] forKey:@"inputColor"];
+    CIImage *bgImgClearOuter = [[filterConstantColor valueForKey:kCIOutputImageKey] imageByCroppingToRect:CGRectMake(0, 0, 500, 500)];
+    
+    CALayer *dlayer = [CALayer layer];
+    dlayer.backgroundColor = [UIColor blackColor].CGColor;
+    dlayer.masksToBounds = YES;
+    dlayer.frame = CGRectMake(0, 0, 800, 900);
+    dlayer.contents =  bgImgClearOuter;
+    [dlayer setNeedsLayout];
+    dlayer.delegate = self;
+    //(__bridge id)
+
+    
+    UIBezierPath *path = [[UIBezierPath alloc] init];
+    [path addArcWithCenter:CGPointMake(300, 300) radius:100 startAngle:0 endAngle:2 * M_PI clockwise:YES];
+    CAShapeLayer *slayer = [CAShapeLayer layer];
+    slayer.frame = CGRectMake(0, 0, 500, 700);
+    slayer.path = path.CGPath;
+    
+    dlayer.mask = slayer;
+    
+//    filte
+//    __bridge CGImageRef _Nonnull
+    UIImage *nimg = [UIImage imageWithCIImage:dlayer.contents];
+    NSLog(@"dd------:%@",NSStringFromCGSize(nimg.size));
+    self.imgV1.image = nimg;
+}
+
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+{
+  // 绘图
+  CGContextSaveGState(ctx);
+    CGContextSetFillColorWithColor(ctx, [UIColor blackColor].CGColor);
+//    CGContextFillPath(<#CGContextRef  _Nullable c#>)
+//    CGContextDrawImage(ctx, CGRectMake(0.0, 0.0, 150.0, 150.0), image.CGImage);
+    CGContextRestoreGState(ctx);
+}
+
 
 - (void)buttonAction:(UIButton *)sender{
-    UIImage *sImg = [UIImage imageNamed:@"bailiang.png"];
-    UIImage *nimg = [QSFilterHelper qs_SourceOuter:self.img maskImg:sImg];;
-    //[QSFilterHelper qs_SourceImg:sImg];
-    //
-    self.imgV1.image = nimg;
+//    UIImage *sImg = [UIImage imageNamed:@"bailiang.png"];
+//    UIImage *nimg = [QSFilterHelper qs_SourceOuter:self.img maskImg:sImg];;
+//    //[QSFilterHelper qs_SourceImg:sImg];
+//    //
+//    self.imgV1.image = nimg;
+    
+    
+//    [self getLayerImage];
+    
+    UIImage *img = [UIImage sq_ImageWithColor:[UIColor blackColor] withPath:[UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, 300, 500)]];
+    //[UIImage imageMaskWithContentSize:CGSizeMake(80, 100) maskWidth:30 colors:@[[UIColor blackColor],[UIColor whiteColor]] cornerRadius:40 fillContent:YES];
+    
+    self.imgV1.image = img;
 }
 @end

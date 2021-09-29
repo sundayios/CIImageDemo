@@ -156,7 +156,6 @@
         CIImage *destImage = [[filterBlendWithDest valueForKey:kCIOutputImageKey] imageByCroppingToRect:result.extent];
         
         
-        
         if (minRadius < maxRadius) {
             //内maskImg
             CIFilter *filterMaskInner = [CIFilter filterWithName:@"CILanczosScaleTransform"];

@@ -19,6 +19,7 @@
 		7F7A16BF27022A3C00743CBF /* QSFilterHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7A16BE27022A3C00743CBF /* QSFilterHelper.m */; };
 		7F9ECEB72702351B00B4ECE6 /* meinv.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7F9ECEB62702351B00B4ECE6 /* meinv.jpg */; };
 		D426CE902702E21100387C8A /* bailiang.png in Resources */ = {isa = PBXBuildFile; fileRef = D426CE8F2702E21100387C8A /* bailiang.png */; };
+		D4ABF7B6270426C2006A86E4 /* UIImage+SQExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = D4ABF7B5270426C2006A86E4 /* UIImage+SQExtension.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,8 @@
 		7F7A16BE27022A3C00743CBF /* QSFilterHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QSFilterHelper.m; sourceTree = "<group>"; };
 		7F9ECEB62702351B00B4ECE6 /* meinv.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = meinv.jpg; sourceTree = "<group>"; };
 		D426CE8F2702E21100387C8A /* bailiang.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bailiang.png; sourceTree = "<group>"; };
+		D4ABF7B4270426C2006A86E4 /* UIImage+SQExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+SQExtension.h"; sourceTree = "<group>"; };
+		D4ABF7B5270426C2006A86E4 /* UIImage+SQExtension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+SQExtension.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +129,8 @@
 				7F7A169A270229FA00743CBF /* main.m */,
 				7F7A16BD27022A3C00743CBF /* QSFilterHelper.h */,
 				7F7A16BE27022A3C00743CBF /* QSFilterHelper.m */,
+				D4ABF7B4270426C2006A86E4 /* UIImage+SQExtension.h */,
+				D4ABF7B5270426C2006A86E4 /* UIImage+SQExtension.m */,
 			);
 			path = CIImageDemo;
 			sourceTree = "<group>";
@@ -284,6 +289,7 @@
 				7F7A169B270229FA00743CBF /* main.m in Sources */,
 				7F7A168D270229F900743CBF /* SceneDelegate.m in Sources */,
 				7F7A16BF27022A3C00743CBF /* QSFilterHelper.m in Sources */,
+				D4ABF7B6270426C2006A86E4 /* UIImage+SQExtension.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
