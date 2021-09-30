@@ -117,10 +117,6 @@
         CGFloat centerX = dwidth / 2.0;
         CGFloat centerY = dheight / 2.0;
         CGFloat maxShadowRadiu = sqrt(pow(centerX, 2) + pow(centerY, 2));
-
-//        CIFilter *colorFilter = [CIFilter filterWithName:@"CIConstantColorGenerator"];
-//        [colorFilter setValue:[UIColor whiteColor] forKey:@"inputColor"];
-//        CIImage *croppedBgImage = [[colorFilter valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
         
         CIImage *maskCIImg = [CIImage imageWithCGImage:maskImg.CGImage];
         CGFloat maskWidth = maskCIImg.extent.size.width;
@@ -265,10 +261,6 @@
 //            [composite2 setValue:dImgSourceInner forKey:@"inputImage"];
 //            [composite2 setValue:dImgResult forKey:@"inputBackgroundImage"];
 //            dImgResult = [[composite valueForKey:kCIOutputImageKey] imageByCroppingToRect:dframe];
-            
-
-            
-            
             nimg = [UIImage imageWithCIImage:dImgResult];
         } else {
             nimg = [UIImage imageWithCIImage:destImage];

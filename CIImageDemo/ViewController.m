@@ -43,17 +43,20 @@
 
 - (UIImageView *)imgV {
     if (!_imgV) {
-        _imgV = [[UIImageView alloc] init];
-        _imgV.contentMode = UIViewContentModeScaleAspectFit;
+        _imgV = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 300)];
+        _imgV.contentMode = UIViewContentModeScaleAspectFill;
+        _imgV.layer.masksToBounds = YES;
         //UIViewContentModeCenter;
         //UIViewContentModeScaleAspectFit
+        
     }
     return _imgV;
 }
 - (UIImageView *)imgV1 {
     if (!_imgV1) {
-        _imgV1 = [[UIImageView alloc] init];
-        _imgV1.contentMode = UIViewContentModeScaleAspectFit;
+        _imgV1 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 300, self.view.frame.size.width, 630)];
+        _imgV1.contentMode = UIViewContentModeScaleAspectFill;
+        _imgV1.layer.masksToBounds = YES;
         //UIViewContentModeCenter;
     }
     return _imgV1;
@@ -95,8 +98,8 @@
     
     
     CGFloat widthImgv = self.view.frame.size.width / 2.0;
-    self.imgV.frame = CGRectMake(0, 30, widthImgv, 700);
-    self.imgV1.frame = CGRectMake(widthImgv, 30, widthImgv, 700);
+//    self.imgV.frame = CGRectMake(0, 30, widthImgv, 500);
+//    self.imgV1.frame = CGRectMake(widthImgv, 30, widthImgv, 500);
     
     [self.view addSubview:self.imgV];
     [self.view addSubview:self.imgV1];
@@ -129,9 +132,10 @@
     
 }
 - (void)img1SetNewImge:(UIImage *)img {
-//    self.imgV1.image = [UIImage new];
-//    self.imgV1.image = nil;
+    self.imgV1.backgroundColor = [UIColor clearColor];
+    self.imgV1.image = [UIImage new];
     self.imgV1.image = img;
+    
     [self.view setNeedsLayout];
 }
 //- (void)getLayerImage {
