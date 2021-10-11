@@ -8,8 +8,9 @@
 #import "UIImage+SQExtension.h"
 
 @implementation UIImage (SQExtension)
-
+//根据bezierPath绘制图形
 + (UIImage *)sq_ImageWithColor:(UIColor *)bgColor withPath:(UIBezierPath *)bezierPath {
+    //根据椭圆获得最小外接矩形
     CGSize theSize = CGPathGetBoundingBox(bezierPath.CGPath).size;
     UIImage *newImage;
     @autoreleasepool {

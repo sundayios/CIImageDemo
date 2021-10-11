@@ -122,21 +122,21 @@
 }
 - (void)sliderOutChange:(UISlider *)sender {
     NSLog(@"%.f",sender.value);
-    UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:self.sliderInnerRadius.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+//    UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:self.sliderInnerRadius.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+//    UIImage *nimg = [QSFilterHelper qs_radiusOuterRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor whiteColor]];
+    UIImage *nimg = [QSFilterHelper qs2_filterInnerRadius:self.sliderInnerRadius.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
     [self img1SetNewImge:nimg];
 }
 - (void)sliderInChange:(UISlider *)sender {
     NSLog(@"%.f",sender.value);
-    UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:sender.value outerRadius:self.sliderOuterRadius.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+//    UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:sender.value outerRadius:self.sliderOuterRadius.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+    UIImage *nimg = [QSFilterHelper qs2_filterInnerRadius:sender.value outerRadius:self.sliderOuterRadius.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
     [self img1SetNewImge:nimg];
     
 }
 - (void)img1SetNewImge:(UIImage *)img {
     self.imgV1.backgroundColor = [UIColor clearColor];
-    self.imgV1.image = [UIImage new];
     self.imgV1.image = img;
-    
-    [self.view setNeedsLayout];
 }
 //- (void)getLayerImage {
 //    CIFilter *filterConstantColor = [CIFilter filterWithName:@"CIConstantColorGenerator"];
