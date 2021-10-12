@@ -21,6 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIImage *)qs2_filterInnerRadius:(CGFloat)minRadius outerRadius:(CGFloat)maxRadius withMaskImg:(UIImage *)maskImg sourceImage:(UIImage *)sImg  backGroundColor:(UIColor *)bgColor;
 + (UIImage *)qs_radiusOuterRadius:(CGFloat)maxRadius withMaskImg:(UIImage *)maskImg sourceImage:(UIImage *)sImg  backGroundColor:(UIColor *)bgColor;
+
++ (UIImage *)qs4_filterSportInnerRadius:(CGFloat)minRadius outerRadius:(CGFloat)maxRadius srcImg:(UIImage*)src;
+
++ (UIImage *)qs6_filterInnerRadius:(CGFloat)minRadius outerRadius:(CGFloat)maxRadius sourceImage:(UIImage *)sImg  backGroundColor:(UIColor *)bgColor;
 @end
 
 NS_ASSUME_NONNULL_END

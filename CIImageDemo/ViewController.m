@@ -99,12 +99,12 @@
     
     CGFloat widthImgv = self.view.frame.size.width / 2.0;
 //    self.imgV.frame = CGRectMake(0, 30, widthImgv, 500);
-//    self.imgV1.frame = CGRectMake(widthImgv, 30, widthImgv, 500);
+    self.imgV1.frame = CGRectMake(0, 0, self.view.frame.size.width, 500);
     
-    [self.view addSubview:self.imgV];
+//    [self.view addSubview:self.imgV];
     [self.view addSubview:self.imgV1];
     
-    self.imgV.image = [UIImage imageNamed:@"bailiang.png"];
+//    self.imgV.image = [UIImage imageNamed:@"bailiang.png"];
     [self.sliderOuterRadius addTarget:self action:@selector(sliderOutChange:) forControlEvents:UIControlEventValueChanged];
     [self.sliderInnerRadius addTarget:self action:@selector(sliderInChange:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:self.sliderOuterRadius];
@@ -124,13 +124,20 @@
     NSLog(@"%.f",sender.value);
 //    UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:self.sliderInnerRadius.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
 //    UIImage *nimg = [QSFilterHelper qs_radiusOuterRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor whiteColor]];
-    UIImage *nimg = [QSFilterHelper qs2_filterInnerRadius:self.sliderInnerRadius.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+//    UIImage *nimg = [QSFilterHelper qs2_filterInnerRadius:self.sliderInnerRadius.value outerRadius:sender.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+    
+//    UIImage *nimg = [QSFilterHelper qs4_filterSportInnerRadius:self.sliderInnerRadius.value outerRadius:sender.value srcImg:self.img];
+    
+    UIImage *nimg = [QSFilterHelper qs6_filterInnerRadius:self.sliderInnerRadius.value outerRadius:sender.value sourceImage:self.img backGroundColor:[UIColor blackColor]];
     [self img1SetNewImge:nimg];
 }
 - (void)sliderInChange:(UISlider *)sender {
     NSLog(@"%.f",sender.value);
 //    UIImage *nimg = [QSFilterHelper qs_filterInnerRadius:sender.value outerRadius:self.sliderOuterRadius.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
-    UIImage *nimg = [QSFilterHelper qs2_filterInnerRadius:sender.value outerRadius:self.sliderOuterRadius.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+//    UIImage *nimg = [QSFilterHelper qs2_filterInnerRadius:sender.value outerRadius:self.sliderOuterRadius.value withMaskImg:self.maskImg sourceImage:self.img backGroundColor:[UIColor blackColor]];
+//    UIImage *nimg = [QSFilterHelper qs4_filterSportInnerRadius:sender.value outerRadius:self.sliderOuterRadius.value srcImg:self.img];
+    
+    UIImage *nimg = [QSFilterHelper qs6_filterInnerRadius:sender.value outerRadius:self.sliderOuterRadius.value sourceImage:self.img backGroundColor:[UIColor blackColor]];
     [self img1SetNewImge:nimg];
     
 }
